@@ -454,11 +454,10 @@ app.post(
 
 app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
   const invoice = req.body;
-
   try {
     const html = buildInvoiceHTML(invoice);
-
     const browser = await puppeteer.launch({
+      headless: "new",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     const page = await browser.newPage();
