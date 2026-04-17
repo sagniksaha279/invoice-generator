@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&family=DM+Mono:wght@300;400&display=swap');
+
+:root {
+  --bg:        #faf8f4;
+  --bg2:       #f3efe8;
+  --bg3:       #ece6da;
+  --card:      rgba(255,253,248,0.85);
+  --card-solid:#fffdf8;
+  --border:    rgba(160,130,80,0.18);
+  --border-bright: rgba(160,130,80,0.45);
+
+  --amber:        #b06f28;
+  --amber-light:  #d4922a;
+  --amber-bright: #e8a83e;
+  --amber-dim:    rgba(176,111,40,0.10);
+
+  --teal:         #2a7c74;
+  --teal-light:   #3a9e95;
+
+  --ink:          #1c1610;
+  --ink-2:        #3d3224;
+  --ink-3:        #6b5c44;
+  --muted:        #a09080;
+
+  --success: #2e7d5e;
+  --danger:  #c0392b;
+
+  --radius:    16px;
+  --radius-sm: 10px;
+  --shadow:    0 4px 24px rgba(80,50,10,0.10);
+  --shadow-lg: 0 16px 56px rgba(80,50,10,0.15);
+  --glow:      0 0 40px rgba(176,111,40,0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Lato', sans-serif;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 5% 0%,   rgba(220,185,120,0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 95% 100%, rgba(176,111,40,0.10) 0%, transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+h1, h2, h3 { font-family: 'Playfair Display', serif; }
+button       { cursor: pointer; font-family: 'Lato', sans-serif; }
+input, textarea, select { font-family: 'Lato', sans-serif; }
+
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--amber); border-radius: 3px; opacity: 0.6; }
