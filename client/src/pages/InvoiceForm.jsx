@@ -94,7 +94,7 @@ export default function InvoiceForm() {
     try {
       const fd = new FormData();
       fd.append("signature", file);
-      const { data } = await axios.post("/api/upload-signature", fd, {
+      const { data } = await axios.post(`${api}/api/upload-signature`, fd, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
       });
       setForm(f => ({ ...f, signatureUrl: data.url }));
@@ -114,7 +114,7 @@ export default function InvoiceForm() {
       const safeDate = (form.invoiceDate || "nodate").replace(/\//g, "-");
       const pdfFilename = `${safeName}_${safeDate}.pdf`;
 
-      await axios.post(`{$api}/api/generate-pdf`,
+      await axios.post(`${api}/api/generate-pdf`,
         { ...form, pdfFilename },
         { headers: { Authorization: `Bearer ${token}` } }
       );
