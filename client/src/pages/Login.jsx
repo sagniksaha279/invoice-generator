@@ -15,7 +15,7 @@ export default function Login() {
     if (!form.username || !form.password) return toast.error("Fill all fields");
     setLoading(true);
     try {
-      const { data } = await axios.post("/api/login", form);
+      const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, form);
       login(data.token, data.username);
       toast.success("Welcome back!");
     } catch (err) {
