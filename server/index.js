@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 const nodemailer = require("nodemailer");
 
 const app = express();
@@ -458,12 +458,14 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
     const html = buildInvoiceHTML(invoice);
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath: "/opt/render/.cache/puppeteer/chrome/linux-147.0.7727.56/chrome-linux64/chrome",
+      executablePath: "/usr/bin/chromium",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
-        "--disable-gpu"
+        "--disable-gpu",
+        "--single-process",
+        "--no-zygote"
       ]
     });
     const page = await browser.newPage();
