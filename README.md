@@ -1,4 +1,4 @@
-# InvoiceGen — Setup Guide
+# Invoice Generation — Setup Guide
 
 ## Project Structure
 ```
