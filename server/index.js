@@ -6,6 +6,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const puppeteer = require("puppeteer-core");
+const chromium = require("@sparticuz/chromium");
 const nodemailer = require("nodemailer");
 
 const app = express();
@@ -47,9 +48,6 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-// ─────────────────────────────────────────────
-// INVOICE HTML GENERATOR
-// ─────────────────────────────────────────────
 function buildInvoiceHTML(invoice) {
   const {
     invoiceNo,
@@ -127,9 +125,7 @@ function buildInvoiceHTML(invoice) {
     )
     .join("");
 
-  const notesList = notes
-    .map((n) => `<li>${n}</li>`)
-    .join("");
+  const notesList = notes.map((n) => `<li>${n}</li>`).join("");
 
   const sigHtml = signatureUrl
     ? `<img src="${signatureUrl}" alt="Signature" style="max-width:160px;max-height:60px;object-fit:contain;" />`
@@ -151,7 +147,6 @@ function buildInvoiceHTML(invoice) {
     padding: 32px 36px;
   }
 
-  /* ── Title ── */
   h1.invoice-title {
     font-size: 32px;
     font-weight: 400;
@@ -159,13 +154,11 @@ function buildInvoiceHTML(invoice) {
     margin-bottom: 16px;
   }
 
-  /* ── Meta rows ── */
   .meta-table { border-collapse: collapse; margin-bottom: 20px; }
   .meta-table td { padding: 2px 0; font-size: 13px; }
   .meta-table td:first-child { color: #9CA3AF; width: 110px; }
   .meta-table td:last-child { font-weight: 600; color: #111827; }
 
-  /* ── Billed By / To ── */
   .billed-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -191,7 +184,6 @@ function buildInvoiceHTML(invoice) {
   }
   .billed-card p span.label { font-weight: 600; color: #111827; }
 
-  /* ── Supply row ── */
   .supply-row {
     display: flex;
     justify-content: space-between;
@@ -202,16 +194,13 @@ function buildInvoiceHTML(invoice) {
   }
   .supply-row span b { color: #111827; }
 
-  /* ── Items Table ── */
   .items-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 0;
     table-layout: fixed;
   }
-  .items-table thead tr {
-    background: #6D28D9;
-  }
+  .items-table thead tr { background: #6D28D9; }
   .items-table thead th {
     color: #fff;
     font-size: 12px;
@@ -234,7 +223,6 @@ function buildInvoiceHTML(invoice) {
   .items-table td.center { text-align: center; }
   .items-table td.right  { text-align: right; }
 
-  /* col widths */
   .items-table col.c-num   { width: 28px; }
   .items-table col.c-desc  { width: auto; }
   .items-table col.c-gst   { width: 60px; }
@@ -244,15 +232,12 @@ function buildInvoiceHTML(invoice) {
   .items-table col.c-igst  { width: 70px; }
   .items-table col.c-total { width: 90px; }
 
-  /* ── Bottom section: totals + signature ── */
   .bottom-section {
     display: flex;
     justify-content: flex-end;
     margin-top: 0;
   }
-  .totals-block {
-    width: 260px;
-  }
+  .totals-block { width: 260px; }
   .totals-row {
     display: flex;
     justify-content: space-between;
@@ -284,7 +269,6 @@ function buildInvoiceHTML(invoice) {
     margin-top: 4px;
   }
 
-  /* ── Notes ── */
   .notes-section { margin-top: 28px; }
   .notes-section h3 {
     font-size: 14px;
@@ -292,10 +276,7 @@ function buildInvoiceHTML(invoice) {
     color: #7C3AED;
     margin-bottom: 8px;
   }
-  .notes-section ul {
-    list-style: none;
-    padding: 0;
-  }
+  .notes-section ul { list-style: none; padding: 0; }
   .notes-section ul li {
     font-size: 12.5px;
     color: #374151;
@@ -310,7 +291,6 @@ function buildInvoiceHTML(invoice) {
     color: #9CA3AF;
   }
 
-  /* ── Footer ── */
   .footer {
     text-align: center;
     font-size: 12px;
@@ -325,18 +305,9 @@ function buildInvoiceHTML(invoice) {
   <h1 class="invoice-title">Invoice</h1>
 
   <table class="meta-table">
-    <tr>
-      <td>Invoice No</td>
-      <td>${invoiceNo || ""}</td>
-    </tr>
-    <tr>
-      <td>Invoice Date</td>
-      <td>${invoiceDate || ""}</td>
-    </tr>
-    <tr>
-      <td>Due Date</td>
-      <td>${dueDate || ""}</td>
-    </tr>
+    <tr><td>Invoice No</td><td>${invoiceNo || ""}</td></tr>
+    <tr><td>Invoice Date</td><td>${invoiceDate || ""}</td></tr>
+    <tr><td>Due Date</td><td>${dueDate || ""}</td></tr>
   </table>
 
   <div class="billed-grid">
@@ -392,18 +363,9 @@ function buildInvoiceHTML(invoice) {
 
   <div class="bottom-section">
     <div class="totals-block">
-      <div class="totals-row">
-        <span>Amount</span>
-        <span>${fmt(subtotal)}</span>
-      </div>
-      <div class="totals-row">
-        <span>IGST</span>
-        <span>${fmt(totalIGST)}</span>
-      </div>
-      <div class="totals-grand">
-        <span>Total (INR)</span>
-        <span>${fmt(grandTotal)}</span>
-      </div>
+      <div class="totals-row"><span>Amount</span><span>${fmt(subtotal)}</span></div>
+      <div class="totals-row"><span>IGST</span><span>${fmt(totalIGST)}</span></div>
+      <div class="totals-grand"><span>Total (INR)</span><span>${fmt(grandTotal)}</span></div>
       <div class="sig-block">
         ${sigHtml}
         <p>Authorised Signatory</p>
@@ -411,14 +373,7 @@ function buildInvoiceHTML(invoice) {
     </div>
   </div>
 
-  ${
-    notesList
-      ? `<div class="notes-section">
-      <h3>Additional Notes</h3>
-      <ul>${notesList}</ul>
-    </div>`
-      : ""
-  }
+  ${notesList ? `<div class="notes-section"><h3>Additional Notes</h3><ul>${notesList}</ul></div>` : ""}
 
   <div class="footer">
     For any enquiry, reach out via email at <b>${contactEmail || billedByEmail || ""}</b>${
@@ -447,7 +402,8 @@ app.post(
   upload.single("signature"),
   (req, res) => {
     if (!req.file) return res.status(400).json({ message: "No file uploaded" });
-    const url = `https://${req.get("host")}/uploads/${req.file.filename}`;
+    const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+    const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
     res.json({ url });
   }
 );
@@ -457,36 +413,25 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
   try {
     const html = buildInvoiceHTML(invoice);
     const browser = await puppeteer.launch({
-      headless: true,
-      executablePath: "/usr/bin/chromium",
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--single-process",
-        "--no-zygote"
-      ]
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
     });
-    const page = await browser.newPage();
 
+    const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
 
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
-      margin: {
-        top: "0px",
-        bottom: "0px",
-        left: "0px",
-        right: "0px",
-      },
+      margin: { top: "0px", bottom: "0px", left: "0px", right: "0px" },
     });
 
     await browser.close();
 
     if (invoice.clientEmail) {
-      const pdfFilename = invoice.pdfFilename || `${invoice.invoiceNo}_teejnil.pdf`;
+      const pdfFilename = invoice.pdfFilename || `${invoice.invoiceNo}_invoice.pdf`;
       await transporter.sendMail({
         from: `"TeejNil" <${process.env.EMAIL_USER}>`,
         to: invoice.clientEmail,
@@ -500,12 +445,7 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
           <p>— Team TeejNil</p>
           <p>Get to know us: https://teejnil.vercel.app</p>
         `,
-        attachments: [
-          {
-            filename: pdfFilename,
-            content: pdf,
-          },
-        ],
+        attachments: [{ filename: pdfFilename, content: pdf }],
       });
     }
 
@@ -517,7 +457,4 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () =>
-  console.log(`Server running on port ${PORT}`)
-);
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
