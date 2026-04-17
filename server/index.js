@@ -446,7 +446,7 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
         subject: `Invoice ${invoice.invoiceNo}`,
         html: `
           <h2>Thank you for using TeejNil_Invoice_Generator 💜</h2>
-          <p>Hello ${invoice.billedToName},</p>
+          <p>Hello your invoice for : ${invoice.billedToName},</p>
           <p>Your invoice <b>${invoice.invoiceNo}</b> is attached.</p>
           <p>We appreciate your trust in our platform.</p>
           <br/>
