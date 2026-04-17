@@ -396,8 +396,7 @@ app.post("/api/login", (req, res) => {
   res.status(401).json({ message: "Invalid credentials" });
 });
 
-app.post(
-  "/api/upload-signature",
+app.post("/api/upload-signature",
   authMiddleware,
   upload.single("signature"),
   (req, res) => {
@@ -420,7 +419,16 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
     });
 
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle0" });
+    await page.setContent(html, { waitUntil: "domcontentloaded" });
+    if (invoice.signatureUrl) {
+      await Promise.race([
+        page.waitForFunction(() => {
+          const img = document.querySelector("img");
+          return img && img.complete && img.naturalHeight !== 0;
+        }),
+        new Promise(resolve => setTimeout(resolve, 3000))
+      ]);
+    }
 
     const pdf = await page.pdf({
       format: "A4",
