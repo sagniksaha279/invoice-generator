@@ -447,7 +447,7 @@ app.post(
   upload.single("signature"),
   (req, res) => {
     if (!req.file) return res.status(400).json({ message: "No file uploaded" });
-    const url = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    const url = `https://${req.get("host")}/uploads/${req.file.filename}`;
     res.json({ url });
   }
 );
@@ -457,8 +457,8 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
   try {
     const html = buildInvoiceHTML(invoice);
     const browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      headless: true,
+      args: ["--no-sandbox","--disable-setuid-sandbox","--disable-dev-shm-usage","--disable-gpu"]
     });
     const page = await browser.newPage();
 
@@ -478,8 +478,7 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
     await browser.close();
 
     if (invoice.clientEmail) {
-      const pdfFilename = invoice.pdfFilename_teejnil || `${invoice.invoiceNo}_teejnil.pdf`;
-
+      const pdfFilename = invoice.pdfFilename || `${invoice.invoiceNo}_teejnil.pdf`;
       await transporter.sendMail({
         from: `"TeejNil" <${process.env.EMAIL_USER}>`,
         to: invoice.clientEmail,
@@ -509,6 +508,8 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT || 3000, () =>
-  console.log(`Server running on http://localhost:${process.env.PORT || 3000}`)
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () =>
+  console.log(`Server running on port ${PORT}`)
 );
