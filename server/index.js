@@ -458,7 +458,7 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
     const html = buildInvoiceHTML(invoice);
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath: puppeteer.executablePath(),
+      executablePath: "/opt/render/.cache/puppeteer/chrome/linux-147.0.7727.56/chrome-linux64/chrome",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
