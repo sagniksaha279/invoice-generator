@@ -149,7 +149,7 @@ export default function InvoiceForm() {
         <div className={styles.topBar}>
           <div className={styles.pageTitleWrap}>
             <div className={styles.pageEyebrow}>Create Document</div>
-            {/* ✅ "Hello, Arka Dey" — updates live as user types their name */}
+            {/* ✅ "Hello, " — updates live as user types their name */}
             <h1 className={styles.pageTitle}>Hello, {displayName} 👋</h1>
           </div>
           <button className={styles.generateBtn} onClick={handleGenerate} disabled={loading}>
@@ -307,7 +307,7 @@ export default function InvoiceForm() {
 
         <div className={styles.mobileGenerate}>
           <button className={styles.generateBtn} onClick={handleGenerate} disabled={loading}>
-            {loading ? <><span className={styles.spinner} /> Generating…</> : <>⬇ Download PDF</>}
+            {loading ? <><span className={styles.spinner} /> Generating…</> : <>Send PDF</>}
           </button>
         </div>
       </main>

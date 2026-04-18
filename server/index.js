@@ -314,10 +314,9 @@ function buildInvoiceHTML(invoice) {
     <div class="billed-card">
       <h3>Billed By</h3>
       <p>${billedByName || ""}</p>
-      <p>${billedByCity || ""}${billedByCity && billedByState ? ", " : ""}${billedByState || ""}</p>
-      ${billedByCountry ? `<p>${billedByCountry}</p>` : ""}
+      <p>${[billedByCity,billedByState || "West Bengal",billedByCountry || "India"].filter(Boolean).join(", ")}</p>
       ${billedByEmail ? `<p><span class="label">Email:</span> ${billedByEmail}</p>` : ""}
-      ${billedByInstagram ? `<p><span class="label">Instagram ID ::</span> ${billedByInstagram}</p>` : ""}
+      ${billedByInstagram ? `<p><span class="label">Instagram ID :</span> ${billedByInstagram}</p>` : ""}
     </div>
     <div class="billed-card">
       <h3>Billed To</h3>
@@ -445,14 +444,18 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
         to: invoice.clientEmail,
         subject: `Invoice ${invoice.invoiceNo}`,
         html: `
-          <h2>Thank you for using TeejNil_Invoice_Generator 💜</h2>
-          <p>Hello your invoice for : ${invoice.billedToName},</p>
-          <p>Your invoice <b>${invoice.invoiceNo}</b> is attached.</p>
-          <p>We appreciate your trust in our platform.</p>
+        <div style="font-family: Arial, sans-serif; color: #374151; line-height: 1.6;">
+          <h2 style="color:#7C3AED; margin-bottom: 8px;">TeejNil Invoice Generator 💜</h2>
+          <p>Hi ${invoice.billedToName || "there"},</p>
+          <p>Your invoice <b>#${invoice.invoiceNo}</b> has been generated successfully and is attached to this email.</p>
+          <p>Thank you for choosing <b>TeejNil</b>. We truly appreciate your trust in our platform.</p>
           <br/>
-          <p>— Team TeejNil</p>
-          <p>Get to know us: https://teejnil.vercel.app</p>
-        `,
+          <p>
+            — <b>Team TeejNil</b><br/>
+            <a href="https://teejnil.vercel.app" style="color:#7C3AED; text-decoration:none;">Know me</a>
+          </p>
+        </div>
+      `,
         attachments: [{ filename: pdfFilename, content: pdf }],
       });
     }
