@@ -467,5 +467,39 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
   }
 });
 
+//send demo credentials to email
+app.post("/api/send-demo-credentials", async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+  try {
+    await transporter.sendMail({
+      from: `"TeejNil" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Demo Login Credentials - TeejNil Invoice Generator",
+      html: `
+        <div style="font-family: Arial; line-height:1.6;">
+          <h2 style="color:#7C3AED;">Demo Access 💜</h2>
+          <p>Hi there,</p>
+          <p>You requested demo access. Use the credentials below:</p>
+          <div style="background:#F5F3FF;padding:12px;border-radius:8px;">
+            <p><b>Username:</b> sagnik</p>
+            <p><b>Password:</b> sagnik123</p>
+          </div>
+          <br/>
+          <p>👉 Login here: <a href="https://invoice-gen-teejnil.vercel.app/login">TeejNil App</a></p>
+          <br/>
+          <p>— Team TeejNil</p>
+        </div>
+      `,
+    });
+    res.json({ message: "Demo credentials sent successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to send email" });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
