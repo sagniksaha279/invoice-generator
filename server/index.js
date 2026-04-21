@@ -446,8 +446,8 @@ app.post("/api/generate-pdf", authMiddleware, async (req, res) => {
         html: `
         <div style="font-family: Arial, sans-serif; color: #374151; line-height: 1.6;">
           <h2 style="color:#7C3AED; margin-bottom: 8px;">TeejNil Invoice Generator 💜</h2>
-          <p>Hi ${invoice.billedToName || "there"},</p>
-          <p>Your invoice <b>#${invoice.invoiceNo}</b> has been generated successfully and is attached to this email.</p>
+          <p>Hi your invoice for : ${invoice.billedToName || "company"},</p>
+          <p>Your invoice number : <b>#${invoice.invoiceNo}</b> has been generated successfully and is attached to this email.</p>
           <p>Thank you for choosing <b>TeejNil</b>. We truly appreciate your trust in our platform.</p>
           <br/>
           <p>
