@@ -83,6 +83,12 @@
   gap: 12px;
 }
 
+.intro {
+  font-size: 14px;
+  color: #a09080;
+  margin-bottom: 16px;
+}
+
 .pageEyebrow {
   font-size: 11px;
   font-weight: 700;
@@ -115,6 +121,7 @@
   transition: all 0.2s;
   box-shadow: 0 4px 20px rgba(176,111,40,0.28);
   letter-spacing: 0.3px;
+  cursor: pointer;
 }
 .generateBtn:hover:not(:disabled) {
   transform: translateY(-2px);
@@ -254,6 +261,7 @@
   padding: 4px 12px;
   border-radius: 8px;
   transition: all 0.2s;
+  cursor: pointer;
 }
 .removeBtn:hover { background: rgba(192,57,43,0.08); border-color: #c0392b; }
 
@@ -281,6 +289,7 @@
   border-radius: 12px;
   transition: all 0.2s;
   width: 100%;
+  cursor: pointer;
 }
 .addBtn:hover { background: rgba(176,111,40,0.07); border-color: #b06f28; }
 
@@ -329,6 +338,7 @@
   padding: 6px 8px;
   border-radius: 6px;
   transition: color 0.2s;
+  cursor: pointer;
 }
 .removeNote:hover { color: #c0392b; }
 
@@ -341,6 +351,7 @@
   padding: 8px;
   border-radius: 10px;
   transition: all 0.2s;
+  cursor: pointer;
 }
 .addNoteBtn:hover { background: rgba(176,111,40,0.07); }
 
@@ -392,6 +403,7 @@
   font-size: 12px;
   font-weight: 600;
   transition: all 0.2s;
+  cursor: pointer;
 }
 .changeSig:hover { background: rgba(192,57,43,0.07); }
 
@@ -404,10 +416,169 @@
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── Success Screen ──────────────────────────── */
+.successScreen {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #faf7f0 0%, #f5ede0 50%, #faf7f0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.successCard {
+  background: rgba(255, 253, 248, 0.95);
+  border: 1px solid rgba(160,130,80,0.22);
+  border-radius: 28px;
+  padding: 52px 48px 44px;
+  max-width: 460px;
+  width: 100%;
+  text-align: center;
+  box-shadow:
+    0 8px 48px rgba(80,50,10,0.12),
+    0 2px 8px rgba(80,50,10,0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  animation: cardIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(28px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Icon + pulsing ring */
+.successIconWrap {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.successPulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(176,111,40,0.12);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1);   opacity: 0.7; }
+  50%       { transform: scale(1.2); opacity: 0.3; }
+}
+
+.mailIcon {
+  position: relative;
+  font-size: 44px;
+  line-height: 1;
+  animation: mailBounce 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+@keyframes mailBounce {
+  from { opacity: 0; transform: scale(0.5) rotate(-8deg); }
+  to   { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* Text */
+.successTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #1c1610;
+  letter-spacing: 0.2px;
+  margin-bottom: 10px;
+}
+
+.successMsg {
+  font-size: 15px;
+  color: #6b5030;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.successSub {
+  font-size: 13px;
+  color: #a09080;
+  margin-bottom: 28px;
+}
+
+/* Progress bar (2.5s matches logout timer) */
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background: rgba(160,130,80,0.15);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progressFill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #c8822e, #9a5818);
+  border-radius: 99px;
+  animation: fillBar 2.5s linear forwards;
+}
+
+@keyframes fillBar {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+/* Gmail button */
+.gmailBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #c8822e, #9a5818);
+  color: #fffdf8;
+  text-decoration: none;
+  padding: 12px 26px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 18px rgba(176,111,40,0.28);
+  transition: all 0.2s;
+  margin-bottom: 22px;
+}
+.gmailBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(176,111,40,0.38);
+  opacity: 0.93;
+}
+
+/* Redirect row */
+.redirectRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #a09080;
+}
+
+/* Override spinner color for dark background context */
+.redirectRow .spinner {
+  border-color: rgba(160,130,80,0.25);
+  border-top-color: #b06f28;
+}
+
+.redirectText {
+  font-size: 13px;
+  color: #a09080;
+}
+
+/* ── Mobile generate bar ─────────────────────── */
 .mobileGenerate { display: none; }
 
 /* ── Responsive ──────────────────────────────── */
@@ -438,6 +609,8 @@
   .pageTitle { font-size: 30px; }
   .headerInner { padding: 12px 16px; }
   .userTag { display: none; }
+  .successCard { padding: 40px 24px 36px; }
+  .successTitle { font-size: 22px; }
 }
 
 @media (max-width: 400px) {

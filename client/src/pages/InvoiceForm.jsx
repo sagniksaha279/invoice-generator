@@ -54,7 +54,7 @@ function Section({ title, icon, children }) {
 }
 
 export default function InvoiceForm() {
-  const { token, user, logout } = useAuth();
+  const { token, logout } = useAuth();
   const [form, setForm] = useState(defaultForm);
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -108,60 +108,89 @@ export default function InvoiceForm() {
     }
   };
 
-const handleGenerate = async () => {
-  if (loading) return;
-  if (!form.clientEmail) return toast.error("Client email required");
+  const handleGenerate = async () => {
+    // Prevent duplicate calls if already loading
+    if (loading) return;
+    if (!form.clientEmail) return toast.error("Client email required");
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const safeName = (form.billedByName || "User").replace(/\s+/g, "");
-    const safeDate = (form.invoiceDate || "nodate").replace(/\//g, "-");
-    const pdfFilename = `${safeName}_${safeDate}.pdf`;
+    try {
+      const safeName = (form.billedByName || "User").replace(/\s+/g, "");
+      const safeDate = (form.invoiceDate || "nodate").replace(/\//g, "-");
+      const pdfFilename = `${safeName}_${safeDate}.pdf`;
 
-    await axios.post(
-      `${api}/api/generate-pdf`,
-      { ...form, pdfFilename },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+      await axios.post(
+        `${api}/api/generate-pdf`,
+        { ...form, pdfFilename },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    setShowSuccess(true);
-    setTimeout(() => {
-      logout();
-      window.location.href = "/login";
-    }, 2500);
+      // Show success screen, then auto-logout after 2.5s
+      setShowSuccess(true);
+      logoutTimer.current = setTimeout(() => {
+        logout();
+        window.location.href = "/login";
+      }, 2500);
 
-  } catch (err) {
-    toast.error("Failed to send email");
-  } finally {
-    setLoading(false);
-  }
-};
+    } catch (err) {
+      toast.error("Failed to send email");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Clean up logout timer on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (logoutTimer.current) {
+        clearTimeout(logoutTimer.current);
+      }
+    };
+  }, []);
 
   const displayName = "Sagnik";
 
-  useEffect(() => {
-  return () => {
-    if (logoutTimer.current) {
-      clearTimeout(logoutTimer.current);
-    }
-  };
-}, []);
-  
+  // ── Success Screen ──────────────────────────────────────────────
   if (showSuccess) {
     return (
       <div className={styles.successScreen}>
         <div className={styles.successCard}>
-          <div className={styles.mailIcon}>📩</div>
-          <h2>Email Sent Successfully!</h2>
-          <p>Your invoice has been delivered to the client.</p>
-          <div className={styles.loader}></div>
-          <span>Redirecting to login...</span>
+          {/* Pulsing ring behind the icon */}
+          <div className={styles.successIconWrap}>
+            <div className={styles.successPulse} />
+            <div className={styles.mailIcon}>📩</div>
+          </div>
+
+          <h2 className={styles.successTitle}>Email Sent Successfully!</h2>
+          <p className={styles.successMsg}>Your invoice has been delivered to the client.</p>
+          <p className={styles.successSub}>Please check your email inbox or spam folder.</p>
+
+          {/* Animated progress bar */}
+          <div className={styles.progressBar}>
+            <div className={styles.progressFill} />
+          </div>
+
+          {/* Bonus: Open Gmail button */}
+          <a
+            href="https://mail.google.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.gmailBtn}
+          >
+            Open Email (Gmail) →
+          </a>
+
+          <div className={styles.redirectRow}>
+            <span className={styles.spinner} />
+            <span className={styles.redirectText}>Redirecting to login...</span>
+          </div>
         </div>
       </div>
     );
   }
-  
+
+  // ── Main Form ───────────────────────────────────────────────────
   return (
     <div className={styles.page}>
       {/* Header */}
@@ -172,7 +201,6 @@ const handleGenerate = async () => {
             <span>Invoice Generator</span>
           </div>
           <div className={styles.userBar}>
-            {/* ✅ Shows billedByName instead of raw auth username */}
             <span className={styles.userTag}>👤 {displayName}</span>
             <button className={styles.logoutBtn} onClick={logout}>Sign Out</button>
           </div>
@@ -183,16 +211,20 @@ const handleGenerate = async () => {
         <div className={styles.topBar}>
           <div className={styles.pageTitleWrap}>
             <div className={styles.pageEyebrow}>Create Document</div>
-            {/* ✅ "Hello, " — updates live as user types their name */}
             <h1 className={styles.pageTitle}>Hello, {displayName} 👋</h1>
           </div>
-          <button className={styles.generateBtn} onClick={handleGenerate} disabled={loading}>
+          <button
+            className={styles.generateBtn}
+            onClick={handleGenerate}
+            disabled={loading}
+          >
             {loading
               ? <><span className={styles.spinner} /> Generating…</>
               : <>Send PDF</>
             }
           </button>
         </div>
+
         <p className={styles.intro}>Fill the client details to get the pdf in your email</p>
         <Field
           label="Client Email"
@@ -203,6 +235,7 @@ const handleGenerate = async () => {
           required
         />
         <br /><br />
+
         <div className={styles.grid}>
           {/* LEFT COLUMN */}
           <div className={styles.left}>
