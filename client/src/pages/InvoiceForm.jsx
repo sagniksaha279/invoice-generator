@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
@@ -57,6 +57,8 @@ export default function InvoiceForm() {
   const { token, user, logout } = useAuth();
   const [form, setForm] = useState(defaultForm);
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const logoutTimer = useRef(null);
   const [sigUploading, setSigUploading] = useState(false);
   const sigInputRef = useRef();
 
@@ -106,28 +108,57 @@ export default function InvoiceForm() {
     }
   };
 
-  const handleGenerate = async () => {
-    if (!form.clientEmail) return toast.error("Client email required");
-    setLoading(true);
-    try {
-      const safeName = (form.billedByName || "User").replace(/\s+/g, "");
-      const safeDate = (form.invoiceDate || "nodate").replace(/\//g, "-");
-      const pdfFilename = `${safeName}_${safeDate}.pdf`;
+const handleGenerate = async () => {
+  if (!form.clientEmail) return toast.error("Client email required");
 
-      await axios.post(`${api}/api/generate-pdf`,
-        { ...form, pdfFilename },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      toast.success("📧 Invoice sent to email!");
-    } catch (err) {
-      toast.error("Failed to send email");
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    const safeName = (form.billedByName || "User").replace(/\s+/g, "");
+    const safeDate = (form.invoiceDate || "nodate").replace(/\//g, "-");
+    const pdfFilename = `${safeName}_${safeDate}.pdf`;
+
+    await axios.post(
+      `${api}/api/generate-pdf`,
+      { ...form, pdfFilename },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    setShowSuccess(true);
+    logoutTimer.current = setTimeout(() => {
+      logout();
+    }, 2500);
+
+  } catch (err) {
+    toast.error("Failed to send email");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const displayName = "Sagnik";
 
+  useEffect(() => {
+  return () => {
+    if (logoutTimer.current) {
+      clearTimeout(logoutTimer.current);
+    }
+  };
+}, []);
+  
+  if (showSuccess) {
+    return (
+      <div className={styles.successScreen}>
+        <div className={styles.successCard}>
+          <div className={styles.mailIcon}>📩</div>
+          <h2>Email Sent Successfully!</h2>
+          <p>Your invoice has been delivered to the client.</p>
+          <div className={styles.loader}></div>
+          <span>Redirecting to login...</span>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className={styles.page}>
       {/* Header */}
