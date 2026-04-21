@@ -126,6 +126,8 @@ function buildInvoiceHTML(invoice) {
     .join("");
 
   const notesList = notes.map((n) => `<li>${n}</li>`).join("");
+  
+  const safeEmail = contactEmail || billedByEmail || "";
 
   const sigHtml = signatureUrl
     ? `<img src="${signatureUrl}" alt="Signature" style="max-width:160px;max-height:60px;object-fit:contain;" />`
@@ -375,8 +377,9 @@ function buildInvoiceHTML(invoice) {
   ${notesList ? `<div class="notes-section"><h3>Additional Notes</h3><ul>${notesList}</ul></div>` : ""}
 
   <div class="footer">
-    For any enquiry, reach out via email at <b><a href="mailto:${email}" style="color:#374151; text-decoration:none;">${email}</a></b>
-    ${contactPhone? `, call on <b><a href="tel:${contactPhone}" style="color:#374151; text-decoration:none;">${contactPhone}</a></b>`: ""}
+    For any enquiry, reach out via email at 
+    <b><a href="mailto:${safeEmail}" style="color:#374151; text-decoration:none;">${safeEmail}</a></b>
+    ${contactPhone ? `, call on <b><a href="tel:${contactPhone}" style="color:#374151; text-decoration:none;">${contactPhone}</a></b>` : ""}
   </div>
 </body>
 </html>`;
