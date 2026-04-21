@@ -109,9 +109,11 @@ export default function InvoiceForm() {
   };
 
 const handleGenerate = async () => {
+  if (loading) return;
   if (!form.clientEmail) return toast.error("Client email required");
 
   setLoading(true);
+
   try {
     const safeName = (form.billedByName || "User").replace(/\s+/g, "");
     const safeDate = (form.invoiceDate || "nodate").replace(/\//g, "-");
@@ -124,8 +126,9 @@ const handleGenerate = async () => {
     );
 
     setShowSuccess(true);
-    logoutTimer.current = setTimeout(() => {
+    setTimeout(() => {
       logout();
+      window.location.href = "/login";
     }, 2500);
 
   } catch (err) {
